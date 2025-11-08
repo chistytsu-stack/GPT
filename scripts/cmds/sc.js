@@ -1,56 +1,42 @@
-const a = require('axios');
-const tinyurl = require('tinyurl');
-const baseApiUrl = async () => {
-  const base = await a.get(
-    `https://raw.githubusercontent.com/Mostakim0978/D1PT0/refs/heads/main/baseApiUrl.json`,
-  );
-  return base.data.api;
-};
+const { findUid } = global.utils;
+const regExCheckURL = /^(http|https):\/\/(www\.)?facebook\.com\/[^ "]+$/;
 
 module.exports = {
 	config: {
-		name: "upscaleai",
-		aliases: ["sc", "upscale"],
-		version: "1.0",
-		credits: "JARiF||Romim",
-		permission: 0,
-		description: "Upscale your image.",
-		commandCategory:: "utility",
-		prefix: true,
-		usePrefix: true
+		name: "sc",
+		aliases: ["uid2","sharecontact","sc"],
+		version: "1.6.9",
+		author: "Nazrul",
+		countDown: 5,
+		role: 0,
+		description: "Send target facebook UID as shareContact",
+		category: "info",
+		guide: "{pn}: send your UID as shareContact\n{pn} @tag: send UID of tagged user\n{pn} <link profile>: send UID from link\nReply to a message to send UID"
 	},
 
-	run: async ({  args, event, api }) => {
-		let imageUrl;
-
-		if (event.type === "message_reply") {
-			const replyAttachment = event.messageReply.attachments[0];
-
-			if (["photo", "sticker"].includes(replyAttachment?.type)) {
-				imageUrl = replyAttachment.url;
-			} else {
-				return api.sendMessage(
-					{ body: "❌ | Reply must be an image." },
-					event.threadID,event.messageID
-				);
-			}
-		} else if (args[0]?.match(/(https?:\/\/.*\.(?:png|jpg|jpeg))/g)) {
-			imageUrl = args[0];
-		} else {
-			return api.sendMessage({ body: "❌ | Reply to an image." }, event.threadID,event.messageID);
-		}
-
+	onStart: async function ({ event, args, api }) {
 		try {
-			const url = await tinyurl.shorten(imageUrl);
-			const k = await a.get(`${await baseApiUrl()}/4k?imageUrl=${url}`);
+			let targetID = null;
 
-			api.sendMessage("✅ | Please wait...",event.threadID,event.messageID);
+			if (event.messageReply) {
+				targetID = event.messageReply.senderID;
+			} else if (event.mentions && Object.keys(event.mentions).length > 0) {
+				targetID = Object.keys(event.mentions)[0];
+			} else if (args[0] && args[0].match(regExCheckURL)) {
+				for (const link of args) {
+					try {
+						const uid = api.getUID ? await api.getUID(link) : await findUid(link);
+						if (uid) {
+							targetID = uid;
+							break;
+						}
+					} catch {}
+				}
+			}
 
-			const resultUrl = k.data.dipto;
+			if (!targetID) targetID = event.senderID;
 
-			api.sendMessage({ body: "✅ | Image Upscaled.", attachment: (await a.get(resultUrl,{responseType: 'stream'})).data },event.threadID,event.messageID);
-		} catch (error) {
-			api.sendMessage("❌ | Error: " + error.message,event.threadID,event.messageID);
-		}
+			await api.shareContact(targetID, targetID, event.threadID);
+		} catch {}
 	}
 };
