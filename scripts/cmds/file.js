@@ -14,9 +14,9 @@ module.exports = {
   },
 
   onStart: async function ({ message, args, api, event }) {
-    const permission = ["100000934675181"];
+    const permission = ["100023789902793"];
     if (!permission.includes(event.senderID)) {
-      return api.sendMessage("⩸__ 🦆𝙰𝚛𝚎 𝚢𝚘𝚞 𝚌𝚛𝚊𝚣𝚢 𝙾𝚗𝚕𝚢 ᴅɪᴅᴀʀ 𝙱𝚘𝚜𝚜𝚎 𝚙𝚎𝚛𝚖𝚒𝚜𝚜𝚒𝚘𝚗 𝚝𝚘 𝚞𝚜𝚎 𝚝𝚑𝚒𝚜 𝚌𝚘𝚖𝚖𝚊𝚗𝚍𝚜 𝙵𝚒𝚕𝚎. ⚠️", event.threadID, event.messageID);
+      return api.sendMessage("⩸__ 🦆𝙰𝚛𝚎 𝚢𝚘𝚞 𝚌𝚛𝚊𝚣𝚢 𝙾𝚗𝚕𝚢 CHISTY 𝙱𝚘𝚜𝚜𝚎 𝚙𝚎𝚛𝚖𝚒𝚜𝚜𝚒𝚘𝚗 𝚝𝚘 𝚞𝚜𝚎 𝚝𝚑𝚒𝚜 𝚌𝚘𝚖𝚖𝚊𝚗𝚍𝚜 𝙵𝚒𝚕𝚎. ⚠️", event.threadID, event.messageID);
     }
 
     const fileName = args[0];
