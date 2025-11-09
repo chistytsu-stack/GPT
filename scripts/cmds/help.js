@@ -7,20 +7,20 @@ const doNotDelete = "[ F A H A D ]"; // decoy text
 module.exports = {
   config: {
     name: "help",
-    version: "1.18",
+    version: "1.19",
     author: "MEHERAZ",
-    usePrefix: false,
+    usePrefix: false, // no prefix by default
     countDown: 3,
     role: 0,
     shortDescription: {
-      en: "View command usage and list all commands directly",
+      en: "View all commands or specific command info",
     },
     longDescription: {
-      en: "View command usage and list all commands directly",
+      en: "View all commands or get usage info of a specific command",
     },
     category: "info",
     guide: {
-      en: "{pn} / help cmdName",
+      en: "{pn} [commandName]",
     },
     priority: 1,
   },
@@ -29,7 +29,7 @@ module.exports = {
     const { threadID } = event;
     const prefix = getPrefix(threadID);
 
-    // যদি help শুধু লেখা হয় → সব কমান্ড দেখাবে
+    // যদি শুধু "help" লেখা হয় → সব কমান্ডের তালিকা
     if (args.length === 0) {
       const categories = {};
       let msg = "";
@@ -54,15 +54,13 @@ module.exports = {
       });
 
       const totalCommands = commands.size;
-
-      msg += `\n\n╭─────❃◔[𝙴𝙽𝙹𝙾𝚈] |[ 𝙼𝙴𝙷𝙴𝚁𝙰𝚉 ]\n│ [ 𝙰𝙳𝙳 𝚃𝙷𝙴 𝙱𝙾𝚃 𝙸𝙳, 𝚂𝙴𝙽𝙳 𝚁𝙴𝚀𝚄𝙴𝚂𝚃 𝙰𝙽𝙳 𝚃𝚈𝙿𝙴: ${prefix}𝙰𝙲𝙿𝙼𝙴 ]\n│ [☞ 𝙳𝙰𝚈𝚁𝙴𝙲𝚃 𝙸𝙳 𝙻𝙸𝙽𝙺: https://www.facebook.com/profile.php?id=61581870474259 ]\n│>𝚃𝙾𝚃𝙰𝙻 𝙲𝙼𝙳𝚂: [☞${totalCommands}].\n│𝚃𝚈𝙿𝙴:[ ⊙${prefix}𝙷𝙴𝙻𝙿 𝚃𝙾⊙\n│⊙<𝙲𝙼𝙳> 𝚃𝙾 𝙻𝙴𝙰𝚁𝙽 𝚃𝙷𝙴 𝚄𝚂𝙰𝙶𝙴.]\n╰────────────✦`;
+      msg += `\n\n╭─────❃◔[𝙴𝙽𝙹𝙾𝚈] |[ 𝙼𝙴𝙷𝙴𝚁𝙰𝚉 ]\n│ [ 𝙰𝙳𝙳 𝙱𝙾𝚃 𝙸𝙳, 𝚂𝙴𝙽𝙳 𝚁𝙴𝚀𝚄𝙴𝚂𝚃 𝙰𝙽𝙳 𝚃𝚈𝙿𝙴: ${prefix}𝙰𝙲𝙿𝙼𝙴 ]\n│ [☞ 𝙳𝙰𝚈𝚁𝙴𝙲𝚃 𝙸𝙳 𝙻𝙸𝙽𝙺: https://www.facebook.com/profile.php?id=61581870474259 ]\n│>𝚃𝙾𝚃𝙰𝙻 𝙲𝙼𝙳𝚂: [☞${totalCommands}].\n│𝚃𝚈𝙿𝙴:[ ⊙${prefix}𝙷𝙴𝙻𝙿⊙ <𝙲𝙼𝙳> 𝚃𝙾 𝙻𝙴𝙰𝚁𝙽 𝚄𝚂𝙰𝙶𝙴.]\n╰────────────✦`;
       msg += `\n╭─────❃\n│ ⍟ | [♛𝙶𝙾𝙰𝚃𝙱𝙾𝚃♛│𝙾𝚆𝙽𝙴𝚁 𝙵𝙱 𝙸𝙳: //www.facebook.com/chisty.57\n╰────────────✦`;
 
-      // ⚡ ইনস্ট্যান্ট রেসপন্স (no image delay)
       await message.reply(msg);
     }
 
-    // help <command> → নির্দিষ্ট কমান্ডের বিস্তারিত দেখাবে
+    // help <command> দিলে → সেই কমান্ডের তথ্য দেখায়
     else {
       const commandName = args[0].toLowerCase();
       const command = commands.get(commandName) || commands.get(aliases.get(commandName));
@@ -101,7 +99,7 @@ module.exports = {
   },
 };
 
-// রোল নম্বরকে টেক্সটে কনভার্ট করে
+// Role text convert
 function roleTextToString(roleText) {
   switch (roleText) {
     case 0:
@@ -115,6 +113,6 @@ function roleTextToString(roleText) {
   }
 }
 
-// ✅ GoatWrapper ঠিক জায়গায় বসানো হয়েছে
+// ✅ No Prefix system apply (works both with & without prefix)
 const wrapper = new GoatWrapper(module.exports);
 wrapper.applyNoPrefix({ allowPrefix: true });
