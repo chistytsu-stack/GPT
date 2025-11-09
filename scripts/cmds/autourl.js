@@ -1,9 +1,11 @@
-const fs = require("fs-extra");
-const axios = require("axios");
-const cheerio = require("cheerio");
-const qs = require("qs");
-const { getStreamFromURL, shortenURL, randomString } = global.utils;
+const fs = require("fs");
+const path = require("path");
 
+const filePath = path.join(__dirname, "cache", "autoseen.txt");
+if (!fs.existsSync(filePath)) {
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(filePath, "", "utf8");
+}
 module.exports = {
   threadStates: {},
   config: {
